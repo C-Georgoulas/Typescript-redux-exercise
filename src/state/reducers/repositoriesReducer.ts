@@ -4,33 +4,45 @@ interface RepositoriesState {
   data: string[];
 }
 
+enum ActionType {
+    SEARCH_REPOSITORIES = 'search_repositories',
+    SEARCH_REPOSITORIES_SUCCESS = 'search_repositories_success',
+    SEARCH_REPOSITORIES_ERROR = 'search_repositories_error'
+}
+
 interface SearchRepositoriesAction {
-  type: "search_repositories";
+  type: ActionType.SEARCH_REPOSITORIES;
 }
 
 interface SearchRepositoriesSuccessAction {
-  type: "search_repositories_success";
+  type: ActionType.SEARCH_REPOSITORIES_SUCCESS;
   payload: string[];
 }
 
 interface SearchRepositoriesErrorAction {
-  type: "search_repositories_error";
+  type: ActionType.SEARCH_REPOSITORIES_ERROR;
   payload: string;
 }
+
+// we can use this type to cut down on adding unecessary conditions in line 30, we can use type enums for this exact reason
+
+type Action = 
+| SearchRepositoriesAction
+| SearchRepositoriesSuccessAction
+| SearchRepositoriesErrorAction
 
 const reducer = (
   state: RepositoriesState,
   action:
-    | SearchRepositoriesAction
-    | SearchRepositoriesSuccessAction
-    | SearchRepositoriesErrorAction
+    Action
 ): RepositoriesState => {
   switch (action.type) {
-    case "search_repositories":
+    case ActionType.SEARCH_REPOSITORIES:
       return { loading: true, error: null, data: [] };
-    case "search_repositories_success":
+    case ActionType.SEARCH_REPOSITORIES_SUCCESS:
+        // 100% certain that 'action' is SearchRepositoriesSuccessAction
       return { loading: false, error: null, data: action.payload };
-    case "search_repositories_error":
+    case ActionType.SEARCH_REPOSITORIES_ERROR:
       return { loading: false, error: action.payload, data: [] };
     default:
       return state;
